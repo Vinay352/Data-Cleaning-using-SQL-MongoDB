@@ -1,0 +1,30 @@
+{initialCollection:'Movies', pipeline:[{$unwind: {
+    path: '$genres'
+   }}, {$match: {
+    year: {
+     $gte: @@InitYear@@,
+     $lte: @@EndYear@@
+    }
+   }}, {$group: {
+    _id: {
+        genre: '$genres',
+     rating: '$rating'
+    },
+    freq: {
+     $sum: 1
+    }
+   }}, {$project: {
+    freq: '$freq',
+    genre: '$_id.genre',
+    rating: {
+     $round: [
+      '$_id.rating',
+      2
+     ]
+    },
+    _id: 0
+   }}, {$match: {
+    freq: {
+     $gt: @@Frequency@@
+    }
+   }}]}

@@ -1,0 +1,72 @@
+SELECT q.mini AS minimum, w.maxi AS maximum, e.med AS median, r.qone AS qone, t.qthree AS qthree
+FROM (
+	SELECT MIN( ROUND(rating, 2) ) AS mini
+	FROM @@View@@
+	) AS q,
+    (
+    SELECT MAX( ROUND(rating, 2) ) AS maxi
+	FROM @@View@@
+    ) AS w,
+    (
+    SELECT (x.yk + z.alpha * (y.ykpo - x.yk)) AS med
+	FROM (
+		( SELECT rating AS yk 
+		FROM @@View@@
+		WHERE position = ( SELECT TRUNCATE( 0.50 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) 
+		) AS x,
+		( SELECT rating AS ykpo 
+		FROM @@View@@ 
+		WHERE position = ( SELECT TRUNCATE( 0.50 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) + 1 
+		) AS y,
+		( SELECT a.j - b.k AS alpha 
+			FROM ( SELECT TRUNCATE( 0.50 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) AS b, 
+					 ( SELECT ROUND( 0.50 * ( COUNT(*) + 1 ), 0 ) AS j 
+				FROM @@View@@ ) AS a
+			) AS z
+		)
+    ) AS e,
+    (
+    SELECT (x.yk + z.alpha * (y.ykpo - x.yk)) AS qone
+	FROM (
+		( SELECT rating AS yk 
+		FROM @@View@@
+		WHERE position = ( SELECT TRUNCATE( 0.25 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) 
+		) AS x,
+		( SELECT rating AS ykpo 
+		FROM @@View@@ 
+		WHERE position = ( SELECT TRUNCATE( 0.25 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) + 1 
+		) AS y,
+		( SELECT a.j - b.k AS alpha 
+			FROM ( SELECT TRUNCATE( 0.25 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) AS b, 
+					 ( SELECT ROUND( 0.25 * ( COUNT(*) + 1 ), 0 ) AS j 
+				FROM @@View@@ ) AS a
+			) AS z
+		)
+    ) AS r,
+    (
+    SELECT (x.yk + z.alpha * (y.ykpo - x.yk)) AS qthree
+	FROM (
+		( SELECT rating AS yk 
+		FROM @@View@@
+		WHERE position = ( SELECT TRUNCATE( 0.75 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) 
+		) AS x,
+		( SELECT rating AS ykpo 
+		FROM @@View@@ 
+		WHERE position = ( SELECT TRUNCATE( 0.75 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) + 1 
+		) AS y,
+		( SELECT a.j - b.k AS alpha 
+			FROM ( SELECT TRUNCATE( 0.75 * (COUNT(*)+1), 0) AS k 
+				FROM @@View@@ ) AS b, 
+					 ( SELECT ROUND( 0.75 * ( COUNT(*) + 1 ), 0 ) AS j 
+				FROM @@View@@ ) AS a
+			) AS z
+		)
+    ) AS t

@@ -1,0 +1,24 @@
+{initialCollection:'Movies', pipeline:[{$match: {
+    genres: '@@Genre@@',
+    totalvotes: {
+     $gt: @@TotalVotes@@
+    }
+   }}, {$project: {
+    rating: {
+     $round: [
+      '$rating',
+      2
+     ]
+    },
+    year: '$year',
+    _id: 0
+   }}, {$group: {
+    _id: '$year',
+    rating: {
+     $avg: '$rating'
+    }
+   }}, {$project: {
+    rating: { $round: [ "$rating", 2 ] },
+    year: '$_id',
+    _id: 0
+   }}]}
