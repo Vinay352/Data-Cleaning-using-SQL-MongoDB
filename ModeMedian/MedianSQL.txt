@@ -1,0 +1,22 @@
+SELECT q.first + e.alpha * (w.afterFirst - q.first)
+FROM (
+	( SELECT attribute AS first 
+	FROM @@Relation@@ 
+	WHERE position = ( SELECT TRUNCATE( @@p@@ * (COUNT(*)+1), 0)
+			FROM @@Relation@@ ) 
+	) AS q,
+	( SELECT attribute AS afterFirst 
+	FROM @@Relation@@ 
+	WHERE position = ( SELECT TRUNCATE(@@p@@ * (COUNT(*)+1), 0)
+			FROM @@Relation@@ ) + 1 
+	) AS w,
+	( SELECT a.j - b.k AS alpha 
+		FROM ( SELECT TRUNCATE(@@p@@ * (COUNT(*)+1), 0) AS k 
+			FROM @@Relation@@ ) AS b, 
+	     	     ( SELECT ROUND( @@p@@ * ( COUNT(*) + 1 ), 0 ) AS j 
+			FROM @@Relation@@ ) AS a
+     	) AS e
+)
+LIMIT 1
+
+

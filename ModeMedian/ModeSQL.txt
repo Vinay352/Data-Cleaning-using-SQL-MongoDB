@@ -1,0 +1,4 @@
+SELECT attribute, COUNT(*) AS freq
+FROM @@Relation@@
+GROUP BY attribute
+Having freq >= ALL( SELECT COUNT(*) FROM @@Relation@@ GROUP BY attribute )
